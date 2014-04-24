@@ -24,9 +24,9 @@ green = 0,204,0
 wpa = {"ssid":"","pass":""}
 caps = False
 focus = "ssid"
-back = "back" #TODO implement delte
+back = "back"
 space = ""
-shift = "shift" #TODO implement caps
+shift = "shift"
 keyboard = pygame.image.load("keyboard.png").convert()
 alphabet = [['Q','W','E','R','T','Y','U','I','O','P'],
             ['A','S','D','F','G','H','J','K','L',back],
@@ -39,8 +39,14 @@ mouse_down = mouse_up = 0
 mouse_down_x = mouse_down_y = 0
 
 def submit(wpa):
+    fo = open("/etc/network/meow", "w") #TODO change to /etc/network/interfaces
+    new_settings =  "auto lo\niface lo inet loopback\niface eth0 inet dhcp\n"+\
+                    "allow-hotplug wlan0\nauto wlan\n"+"iface wlan0 inet dhcp\n"+\
+                    "        wpa-ssid '%s'\n        wpa-psk '%s'"\
+                    % (wpa["ssid"], wpa["pass"])
+    fo.write(new_settings)
+    fo.close()
     sys.exit()
-    pass
 
 def key_touch(x,y):
     global caps
@@ -68,7 +74,6 @@ def key_touch(x,y):
     else:
         focus = "pass"
 
-#repeating loop
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -77,9 +82,6 @@ while True:
             # mouse_down = event.button
             mouse_down_x,mouse_down_y = event.pos
             key_touch(mouse_down_x,mouse_down_y)
-    keys = pygame.key.get_pressed()
-    if keys[K_ESCAPE]:
-        sys.exit()
 
     screen.fill((grey))
     screen.blit(keyboard, (0,106)) #fix keyboard.png to fix 7 rows or 30 pixels
