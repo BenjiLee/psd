@@ -3,26 +3,23 @@ from subprocess import Popen, PIPE
 from pygame.locals import *
 
 output = Popen(['hostname'], stdout=PIPE)
-toggle = "r"
-device = output.stdout.read()
-print "Device:" + device
+device = output.stdout.read().replace("\n", "")
 
-if device is "raspberrypi":
+if device == "raspberrypi":
     os.putenv('SDL_VIDEODRIVER', 'fbcon')
     os.putenv('SDL_FBDEV'      , '/dev/fb1')
     os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
     os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
 
-#main program begins
 pygame.init()
 
-if device is "raspberrypi":
+if device == "raspberrypi":
     modes = pygame.display.list_modes(16)
     screen = pygame.display.set_mode(modes[0], FULLSCREEN, 16)
+    pygame.mouse.set_visible(False)
 else:
     screen = pygame.display.set_mode((240,320))
 
-#pygame.mouse.set_visible(False)
 font1 = pygame.font.Font(None, 24)
 white = 255,255,255
 black = 0,0,0
