@@ -1,61 +1,96 @@
 import sys, pygame, os
 from pygame.locals import *
 
-def print_text(font, x, y, text, color=(255,255,255)):
+def print_text(font, x, y, text, color=(0,0,0)):
     imgText = font.render(text, True, color)
     screen.blit(imgText, (x,y))
 
-os.putenv('SDL_VIDEODRIVER', 'fbcon')
-os.putenv('SDL_FBDEV'      , '/dev/fb1')
-os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
-os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
+# os.putenv('SDL_VIDEODRIVER', 'fbcon')
+# os.putenv('SDL_FBDEV'      , '/dev/fb1')
+# os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
+# os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
 
 #main program begins
 pygame.init()
 
 modes = pygame.display.list_modes(16)
-screen = pygame.display.set_mode(modes[0], FULLSCREEN, 16)
-#screen = pygame.display.set_mode((240,320))
+#screen = pygame.display.set_mode(modes[0], FULLSCREEN, 16)
+screen = pygame.display.set_mode((240,320))
 pygame.display.set_caption("Mouse Demo")
 font1 = pygame.font.Font(None, 24)
 white = 255,255,255
 black = 0,0,0
 grey = 200,200,200
+wpa = {"ssid":"","pass":""}
+caps = False
+focus = "ssid"
+back = "back" #TODO implement delte
+space = ""
+shift = "shift" #TODO implement caps
 keyboard = pygame.image.load("keyboard.png").convert()
-mouse_x = mouse_y = 0
+alphabet = [['Q','W','E','R','T','Y','U','I','O','P'],
+            ['A','S','D','F','G','H','J','K','L',back],
+            ['Z','X','C','V','B','N','M',',','.',back],
+            ['1','2','3','4','5','6','7','8','9','0'],
+            ['!','@','#','$','%','^','&','*','(',')'],
+            ['_','+','-','=','{','}',"'",'"','<','>'],
+            ['?','`','~','/','\\',shift,shift,' ',' ',' ']]
 mouse_down = mouse_up = 0
 mouse_down_x = mouse_down_y = 0
-mouse_up_x = mouse_up_y = 0
+
+def key_touch(x,y):
+    global caps
+    global focus
+    if y >110:
+        x = x/24
+        y = (y-110)/30
+        key = alphabet[y][x]
+        if key is "shift":
+            if caps is True:
+                caps = False
+            else:
+                caps = True
+        elif key is "back":
+            wpa[focus] = wpa[focus][:-1]
+        else:
+            if key.isalpha():
+                if caps is False:
+                    key = key.lower()
+            wpa[focus] = wpa[focus] + key
+    elif y < 55:
+        focus = "ssid"
+    else:
+        focus = "pass"
 
 #repeating loop
 while True:
     for event in pygame.event.get():
         if event.type == QUIT:
             sys.exit()
-        elif event.type == MOUSEMOTION:
-            mouse_x,mouse_y = event.pos
         elif event.type == MOUSEBUTTONDOWN:
             mouse_down = event.button
             mouse_down_x,mouse_down_y = event.pos
-        elif event.type == MOUSEBUTTONUP:
-            mouse_up = event.button
-            mouse_up_x,mouse_up_y = event.pos
-
+            key_touch(mouse_down_x,mouse_down_y)
     keys = pygame.key.get_pressed()
     if keys[K_ESCAPE]:
         sys.exit()
 
     screen.fill((grey))
-    screen.blit(keyboard, (0,100))
+    screen.blit(keyboard, (0,106)) #fix keyboard.png to fix 7 rows or 30 pixels
 
-    print_text(font1, 0, 20, "Mouse position: " + str(mouse_x) +
-               "," + str(mouse_y))
+    if caps is True:
+        print_text(font1, 150,10, "Capslock")
+    print_text(font1, 0,10, "SSID:")
+    pygame.draw.rect(screen, white, (5,30,230,20))
+    print_text(font1, 10,30, wpa["ssid"])
+    print_text(font1, 0,55, "Password:")
+    pygame.draw.rect(screen, white, (5,75,230,20))
+    print_text(font1, 10,75, wpa["pass"])
 
-    print_text(font1, 0, 60, "Mouse button down: " + str(mouse_down) +
-               " at " + str(mouse_down_x) + "," + str(mouse_down_y))
-
-    print_text(font1, 0, 80, "Mouse button up: " + str(mouse_up) +
-               " at " + str(mouse_up_x) + "," + str(mouse_up_y))
+    if focus is "ssid":
+        pygame.draw.rect(screen, black, (5,30,230,20),2)
+    else:
+        pygame.draw.rect(screen, black, (5,75,230,20),2)
 
 
     pygame.display.update()
