@@ -1,22 +1,26 @@
-import sys, pygame, os
+import sys, pygame,os
+from subprocess import Popen, PIPE
 from pygame.locals import *
 
-def print_text(font, x, y, text, color=(0,0,0)):
-    imgText = font.render(text, True, color)
-    screen.blit(imgText, (x,y))
+output = Popen(['hostname'], stdout=PIPE)
+toggle = "r"
+device = output.stdout.read()
+print "Device:" + device
 
-# os.putenv('SDL_VIDEODRIVER', 'fbcon')
-# os.putenv('SDL_FBDEV'      , '/dev/fb1')
-# os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
-# os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
+if device is "raspberrypi":
+    os.putenv('SDL_VIDEODRIVER', 'fbcon')
+    os.putenv('SDL_FBDEV'      , '/dev/fb1')
+    os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
+    os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
 
 #main program begins
 pygame.init()
 
-modes = pygame.display.list_modes(16)
-#screen = pygame.display.set_mode(modes[0], FULLSCREEN, 16)
-
-screen = pygame.display.set_mode((240,320))
+if device is "raspberrypi":
+    modes = pygame.display.list_modes(16)
+    screen = pygame.display.set_mode(modes[0], FULLSCREEN, 16)
+else:
+    screen = pygame.display.set_mode((240,320))
 
 #pygame.mouse.set_visible(False)
 font1 = pygame.font.Font(None, 24)
@@ -42,6 +46,10 @@ alphabet = [['Q','W','E','R','T','Y','U','I','O','P'],
             ['?','`','~','/','\\',shift,shift,' ',' ',' ']]
 mouse_down = mouse_up = 0
 mouse_down_x = mouse_down_y = 0
+
+def print_text(font, x, y, text, color=(0,0,0)):
+    imgText = font.render(text, True, color)
+    screen.blit(imgText, (x,y))
 
 def submit(wpa):
     fo = open("/etc/network/interfaces", "w")
@@ -114,7 +122,7 @@ while True:
     pygame.draw.rect(screen, green, (165,5,70,50))
     print_text(font1, 172,25, "Submit")
 
-    pygame.draw.rect(screen, black, (165,60,70,50),2)
+    pygame.draw.rect(screen, black, (164,59,71,51),2)
     pygame.draw.rect(screen, red, (165,60,70,50))
     print_text(font1, 186,79, "Exit")
 
