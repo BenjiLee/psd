@@ -12,10 +12,10 @@ void scanButton (int button)
         switch(button)
         {
             case 1:
-            system ("sh ~/psd/resetwifi.sh");
+            system ("sh /home/pi/psd/resetwifi.sh");
             break;
             case 2:
-            system ("sudo python ~/psd/wifi.py");
+            system ("sudo python /home/pi/psd/wifi.py");
             break;
             case 3:
             printf("janet smells\n");
