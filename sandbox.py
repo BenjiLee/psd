@@ -5,7 +5,10 @@ def print_text(font, x, y, text, color=(255,255,255)):
     imgText = font.render(text, True, color)
     screen.blit(imgText, (x,y))
 
-
+os.putenv('SDL_VIDEODRIVER', 'fbcon')
+os.putenv('SDL_FBDEV'      , '/dev/fb1')
+os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
+os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
 
 #main program begins
 pygame.init()
