@@ -15,18 +15,23 @@ pygame.init()
 
 modes = pygame.display.list_modes(16)
 #screen = pygame.display.set_mode(modes[0], FULLSCREEN, 16)
+
 screen = pygame.display.set_mode((240,320))
+
+#pygame.mouse.set_visible(False)
 font1 = pygame.font.Font(None, 24)
 white = 255,255,255
 black = 0,0,0
 grey = 200,200,200
-green = 0,204,0
+green = 0,200,0
+red = 200,0,0
 wpa = {"ssid":"","pass":""}
 caps = False
 focus = "ssid"
 back = "back"
 space = ""
 shift = "shift"
+#keyboard = pygame.image.load("/home/pi/psd/keyboard.png").convert()
 keyboard = pygame.image.load("keyboard.png").convert()
 alphabet = [['Q','W','E','R','T','Y','U','I','O','P'],
             ['A','S','D','F','G','H','J','K','L',back],
@@ -39,10 +44,10 @@ mouse_down = mouse_up = 0
 mouse_down_x = mouse_down_y = 0
 
 def submit(wpa):
-    fo = open("/etc/network/meow", "w") #TODO change to /etc/network/interfaces
+    fo = open("/etc/network/interfaces", "w")
     new_settings =  "auto lo\niface lo inet loopback\niface eth0 inet dhcp\n"+\
                     "allow-hotplug wlan0\nauto wlan\n"+"iface wlan0 inet dhcp\n"+\
-                    "        wpa-ssid '%s'\n        wpa-psk '%s'"\
+                    '        wpa-ssid "%s"\n        wpa-psk "%s"'\
                     % (wpa["ssid"], wpa["pass"])
     fo.write(new_settings)
     fo.close()
@@ -68,7 +73,10 @@ def key_touch(x,y):
                     key = key.lower()
             wpa[focus] = wpa[focus] + key
     elif x >165 :
-        submit(wpa);
+        if y < 55:
+            submit(wpa);
+        else:
+            sys.exit()
     elif y < 55:
         focus = "ssid"
     else:
@@ -84,7 +92,7 @@ while True:
             key_touch(mouse_down_x,mouse_down_y)
 
     screen.fill((grey))
-    screen.blit(keyboard, (0,106)) #fix keyboard.png to fix 7 rows or 30 pixels
+    screen.blit(keyboard, (0,110)) #fix keyboard.png to fix 7 rows or 30 pixels
 
     if caps is True:
         print_text(font1, 80,10, "Capslock")
@@ -102,8 +110,12 @@ while True:
     else:
         pygame.draw.rect(screen, black, (5,75,155,20),2)
 
-    pygame.draw.rect(screen, black, (165,15,70,80),2)
-    pygame.draw.rect(screen, green, (165,15,70,80))
-    print_text(font1, 173,45, "Submit")
+    pygame.draw.rect(screen, black, (165,5,70,50),2)
+    pygame.draw.rect(screen, green, (165,5,70,50))
+    print_text(font1, 172,25, "Submit")
+
+    pygame.draw.rect(screen, black, (165,60,70,50),2)
+    pygame.draw.rect(screen, red, (165,60,70,50))
+    print_text(font1, 186,79, "Exit")
 
     pygame.display.update()
