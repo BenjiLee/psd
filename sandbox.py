@@ -16,11 +16,11 @@ pygame.init()
 modes = pygame.display.list_modes(16)
 #screen = pygame.display.set_mode(modes[0], FULLSCREEN, 16)
 screen = pygame.display.set_mode((240,320))
-pygame.display.set_caption("Mouse Demo")
 font1 = pygame.font.Font(None, 24)
 white = 255,255,255
 black = 0,0,0
 grey = 200,200,200
+green = 0,204,0
 wpa = {"ssid":"","pass":""}
 caps = False
 focus = "ssid"
@@ -37,6 +37,10 @@ alphabet = [['Q','W','E','R','T','Y','U','I','O','P'],
             ['?','`','~','/','\\',shift,shift,' ',' ',' ']]
 mouse_down = mouse_up = 0
 mouse_down_x = mouse_down_y = 0
+
+def submit(wpa):
+    sys.exit()
+    pass
 
 def key_touch(x,y):
     global caps
@@ -57,6 +61,8 @@ def key_touch(x,y):
                 if caps is False:
                     key = key.lower()
             wpa[focus] = wpa[focus] + key
+    elif x >165 :
+        submit(wpa);
     elif y < 55:
         focus = "ssid"
     else:
@@ -68,7 +74,7 @@ while True:
         if event.type == QUIT:
             sys.exit()
         elif event.type == MOUSEBUTTONDOWN:
-            mouse_down = event.button
+            # mouse_down = event.button
             mouse_down_x,mouse_down_y = event.pos
             key_touch(mouse_down_x,mouse_down_y)
     keys = pygame.key.get_pressed()
@@ -79,18 +85,23 @@ while True:
     screen.blit(keyboard, (0,106)) #fix keyboard.png to fix 7 rows or 30 pixels
 
     if caps is True:
-        print_text(font1, 150,10, "Capslock")
-    print_text(font1, 0,10, "SSID:")
-    pygame.draw.rect(screen, white, (5,30,230,20))
+        print_text(font1, 80,10, "Capslock")
+
+    print_text(font1, 5,10, "SSID:")
+    pygame.draw.rect(screen, white, (5,30,155,20))
     print_text(font1, 10,30, wpa["ssid"])
-    print_text(font1, 0,55, "Password:")
-    pygame.draw.rect(screen, white, (5,75,230,20))
+
+    print_text(font1, 5,55, "Password:")
+    pygame.draw.rect(screen, white, (5,75,155,20))
     print_text(font1, 10,75, wpa["pass"])
 
     if focus is "ssid":
-        pygame.draw.rect(screen, black, (5,30,230,20),2)
+        pygame.draw.rect(screen, black, (5,30,155,20),2)
     else:
-        pygame.draw.rect(screen, black, (5,75,230,20),2)
+        pygame.draw.rect(screen, black, (5,75,155,20),2)
 
+    pygame.draw.rect(screen, black, (165,15,70,80),2)
+    pygame.draw.rect(screen, green, (165,15,70,80))
+    print_text(font1, 173,45, "Submit")
 
     pygame.display.update()
