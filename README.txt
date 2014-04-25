@@ -10,25 +10,25 @@ christopherlee2012@gmail.com
 Goals:
 
     This project's goal is to create a personal scanning device that will record
-a stores barcodes into a text file. This text file needs to be easily accessible
+a store's barcodes into a text file. This text file needs to be easily accessible
 for most users. This file will then be put into a retail software to update a
-store's database with it's physical inventory. The file will be transfers by
-making the raspberry pi a server, and having the client computer access it it
-via local ip.
-
+store's database with its physical inventory. The file will be transferred by
+making the raspberry pi a server, and having the client computer access it
+via a local ip.
 
 
 Learning goals:
-    All this can be done bu simply hooking up a barcode scanner to a pi, loading
-upa text file and then manually transferring it over. The main idea of this is
-to reduce the amount of manual steps need to complete this process. Originally
-I had planned to mount and umount a USB drive, but that was too easy/accessing
-the information via server would better because there would be less physical
-interaction with the product.
+
+    All this can be done by simply hooking up a barcode scanner to a pi, loading
+up a text file and then manually transferring it over. The main idea of this is
+to reduce the number of manual steps needed to complete this process. Originally
+I had planned to simply mount and umount a USB drive, but transferring the
+information via server would minimize the physical interaction with the product
+and optimize the user experience.
 
 -Make the raspberry pi into a fileserver I can access from a browser in the
 local network
--Create an interface to input the wifi name/pass.
+-Create an interface to input the wifi name/pass
 -Assign the GPIO buttons to commands
 -Attach a touchscreen (PiTFT by adafruit)
 -Create an interface for writing barcode data to file
@@ -39,6 +39,10 @@ GUI's will be made using pygame. Images will be created via photoshop.
 
 GPIO configuration was written in C rather than python since it was originally
 meant for C.
+
+GPIO buttons from #23, #22, #21, #18
+
+Shutdown, scanner gui, wifi setup gui, server gui
 
 
 To compile gpio.c:
