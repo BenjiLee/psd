@@ -46,4 +46,4 @@ Shutdown, scanner gui, wifi setup gui, server gui
 
 
 To compile gpio.c:
-"gcc -o gpio gpio.c -I/usr/local/include -L/usr/local/lib -lwiringPi"
+gcc -o gpio gpio.c -I/usr/local/include -L/usr/local/lib -lwiringPi
