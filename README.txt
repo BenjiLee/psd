@@ -35,6 +35,8 @@ local network
 
 
 Notes:
+Screen is rotated to portrait.
+
 GUI's will be made using pygame. Images will be created via photoshop.
 
 GPIO configuration was written in C rather than python since it was originally
