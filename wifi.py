@@ -2,18 +2,31 @@ import sys, pygame,os
 from subprocess import Popen, PIPE
 from pygame.locals import *
 
-alphabet = (('Q','W','E','R','T','Y','U','I','O','P'),
+
+
+class Thing:
+    def __init__(self, caps, alphabet, focus, wpa,device):
+        self.caps = caps
+        self.alphabet = alphabet
+        self.focus = focus
+        self.wpa = wpa
+        self.device = device
+
+
+def main():
+    output = Popen(['hostname'], stdout=PIPE)
+    device = output.stdout.read().replace("\n", "")
+    alphabet = (('Q','W','E','R','T','Y','U','I','O','P'),
             ('A','S','D','F','G','H','J','K','L',"back"),
             ('Z','X','C','V','B','N','M',',','.',"back"),
             ('1','2','3','4','5','6','7','8','9','0'),
             ('!','@','#','$','%','^','&','*','(',')'),
             ('_','+','-','=','{','}',"'",'"','<','>'),
             ('?','`','~','/','\\',"shift","shift",' ',' ',' '))
-caps = False
-
-def main():
-    output = Popen(['hostname'], stdout=PIPE)
-    device = output.stdout.read().replace("\n", "")
+    caps = False
+    wpa = {"ssid":"","pass":""}
+    focus = "ssid"
+    thing = Thing(caps,alphabet,focus,wpa, device)
 
     if device == "raspberrypi":
         os.putenv('SDL_VIDEODRIVER', 'fbcon')
@@ -33,12 +46,12 @@ def main():
     font1 = pygame.font.Font(None, 24)
     colors = {"white":(255,255,255), "black":(0,0,0),"red":(200,0,0),\
                   "green":(0,200,0),"grey":(200,200,200)}
-    wpa = {"ssid":"","pass":""}
-    focus = "ssid"
+
     if device == "raspberrypi":
         keyboard = pygame.image.load("/home/pi/psd/keyboard.png").convert()
     else:
         keyboard = pygame.image.load("keyboard.png").convert()
+
 
 
     mouse_down_x = mouse_down_y = 0
@@ -50,7 +63,7 @@ def main():
             elif event.type == MOUSEBUTTONDOWN:
                 # mouse_down = event.button
                 mouse_down_x,mouse_down_y = event.pos
-                key_touch(mouse_down_x,mouse_down_y,caps,wpa,focus,device)
+                key_touch(mouse_down_x,mouse_down_y,thing)
 
         screen.fill((colors["grey"]))
         screen.blit(keyboard, (0,110)) #fix keyboard.png to fix 7 rows or 30 pixels
@@ -66,7 +79,7 @@ def main():
         pygame.draw.rect(screen, colors["white"], (5,75,155,20))
         print_text(font1, 10,75, wpa["pass"], screen)
 
-        if focus is "ssid":
+        if thing.focus is "ssid":
             pygame.draw.rect(screen, colors["black"], (5,30,155,20),2)
         else:
             pygame.draw.rect(screen, colors["black"], (5,75,155,20),2)
@@ -86,49 +99,49 @@ def print_text(font, x, y, text, screen, color=(0,0,0)):
     screen.blit(imgText, (x,y))
 
 def submit(wpa,device):
-    if device == "raspberrypi":
-        fo = open("/etc/network/interfaces", "w")
-        new_settings =  "auto lo\n\n"+\
+    new_settings =  "auto lo\n\n"+\
                         "iface lo inet loopback\n"+\
-                        "iface eth0 inet dhcp\n"+\
-                        "allow-hotplug wlan0\n\n"+\
-                        "auto wlan\n"+\
+                        "iface eth0 inet dhcp\n\n"+\
+                        "allow-hotplug wlan0\n"+\
+                        "auto wlan0\n"+\
                         "iface wlan0 inet dhcp\n"+\
                         '        wpa-ssid "%s"\n        wpa-psk "%s"'\
                         % (wpa["ssid"], wpa["pass"])
+    if device == "raspberrypi":
+        fo = open("/etc/network/interfaces", "w")
         fo.write(new_settings)
         fo.close()
     else:
-        print "Not a Pi"
+        print new_settings
     sys.exit()
 
-def key_touch(x,y):
+def key_touch(x,y, thing):
     global caps
     if y >110:
         x = x/24
         y = (y-110)/30
-        key = alphabet[y][x]
+        key = thing.alphabet[y][x]
         if key is "shift":
-            if caps is True:
-                caps = False
+            if thing.caps is True:
+                thing.caps = False
             else:
-                caps = True
+                thing.caps = True
         elif key is "back":
-            wpa[focus] = wpa[focus][:-1]
+            thing.wpa[thing.focus] = thing.wpa[thing.focus][:-1]
         else:
             if key.isalpha():
-                if caps is False:
+                if thing.caps is False:
                     key = key.lower()
-            wpa[focus] = wpa[focus] + key
+            thing.wpa[thing.focus] = thing.wpa[thing.focus] + key
     elif x >165 :
         if y < 55:
-            submit(wpa,device);
+            submit(thing.wpa,thing.device);
         else:
             sys.exit()
     elif y < 55:
-        focus = "ssid"
+        thing.focus = "ssid"
     else:
-        focus = "pass"
+        thing.focus = "pass"
 
 if __name__ == "__main__":
     main()
