@@ -24,13 +24,11 @@ def main():
 
     info = Info()
 
+    get_files(info)
+
     font1 = pygame.font.Font(None, 24)
     colors = {"white":(255,255,255), "black":(0,0,0),"red":(200,0,0),\
-              "green":(0,200,0),"grey":(200,200,200)}
-
-    mouse_down_x = mouse_down_y = 0
-
-    #get_files(device)
+              "green":(0,200,0),"dgrey":(200,200,200), "lgrey":(250,250,250)}
 
 
     while True:
@@ -42,16 +40,14 @@ def main():
                 mouse_down_x,mouse_down_y = event.pos
                 key_touch(mouse_down_x,mouse_down_y)
 
-        info.screen.fill((colors["grey"]))
+        info.screen.fill((colors["lgrey"]))
+        pygame.draw.rect(info.screen, colors["dgrey"], (0,0,70,320))
 
+        column = 5
+        for i in range(0,len(info.files)):
+            print_text(font1, 75, column, info.files[i], info.screen)
+            column += 20
 
-        pygame.draw.rect(info.screen, colors["black"], (165,5,70,50),2)
-        pygame.draw.rect(info.screen, colors["green"], (165,5,70,50))
-        print_text(font1, 172,25, "Submit",info.screen)
-
-        pygame.draw.rect(info.screen, colors["black"], (165,60,70,50),2)
-        pygame.draw.rect(info.screen, colors["red"], (165,60,70,50))
-        print_text(font1, 186,79,"Exit",info.screen)
 
         pygame.display.update()
 
@@ -66,12 +62,12 @@ def close_file():
 def key_touch(x,y):
     pass
 
-def get_files(device):
-    if device == "raspberrypi":
+def get_files(info):
+    if info.device == "raspberrypi":
         output = Popen(['ls','/home/pi/files'], stdout=PIPE)
     else:
-        output = Popen(['ls','/home/pi/files'], stdout=PIPE)
-    device = output.stdout.read().replace("\n", "")
+        output = Popen(['ls','/home/spoon/files'], stdout=PIPE)
+    info.files = output.stdout.read().replace("\n"," ").split()
 
 if __name__ == "__main__":
     main()
