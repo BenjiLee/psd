@@ -4,7 +4,7 @@ from pygame.locals import *
 
 
 
-class Thing:
+class Things:
     def __init__(self, caps, alphabet, focus, wpa,device):
         self.caps = caps
         self.alphabet = alphabet
@@ -26,7 +26,7 @@ def main():
     caps = False
     wpa = {"ssid":"","pass":""}
     focus = "ssid"
-    thing = Thing(caps,alphabet,focus,wpa, device)
+    thing = Things(caps, alphabet,focus, wpa, device)
 
     if device == "raspberrypi":
         os.putenv('SDL_VIDEODRIVER', 'fbcon')
@@ -52,10 +52,6 @@ def main():
     else:
         keyboard = pygame.image.load("keyboard.png").convert()
 
-
-
-    mouse_down_x = mouse_down_y = 0
-
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
@@ -68,7 +64,7 @@ def main():
         screen.fill((colors["grey"]))
         screen.blit(keyboard, (0,110)) #fix keyboard.png to fix 7 rows or 30 pixels
 
-        if caps is True:
+        if thing.caps is True:
             print_text(font1, 80,10, "Capslock", screen)
 
         print_text(font1, 5,10, "SSID:", screen)
@@ -116,7 +112,6 @@ def submit(wpa,device):
     sys.exit()
 
 def key_touch(x,y, thing):
-    global caps
     if y >110:
         x = x/24
         y = (y-110)/30
