@@ -246,6 +246,18 @@ def menu_touch_input(x,y,info,keyboard):
             print "no file in selected space"
 
 def new_file_touch_input(x,y,keyboard,info):
+    """
+    Takes the touchscreen's input and runs the appropriate action depending on
+    the location of the pixels input.
+
+    @param x: x coordinate in pixels
+    @type x: int
+    @param y: y coordinate in pixels
+    @type y: int
+    @param info: object with our configurations and states
+    @type info: Info
+
+    """
     if y >110:
         x = x/24
         y = (y-110)/30
@@ -277,8 +289,15 @@ def new_file_touch_input(x,y,keyboard,info):
             info.rename = None
 
 def rename_file(filename,info):
+    """
+    Takes the new name and renames the file.
+
+    @param filename: new name of the file
+    @type filename: string
+    @param info: object with our configurations and states
+    @type info: Info
+    """
     filename = info.rename.split("=")[0]+"="+filename
-    print filename
     if info.device == "raspberrypi":
         current = "/home/pi/files/"+info.rename
         new = "/home/pi/files/"+filename
