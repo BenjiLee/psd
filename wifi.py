@@ -82,11 +82,11 @@ def main():
 
         pygame.draw.rect(screen, colors["black"], (165,5,70,50),2)
         pygame.draw.rect(screen, colors["green"], (165,5,70,50))
-        print_text(font1, 172,25, "Submit", screen)
+        print_text(font1, 174,22, "Submit", screen)
 
         pygame.draw.rect(screen, colors["black"], (165,60,70,50),2)
         pygame.draw.rect(screen, colors["red"], (165,60,70,50))
-        print_text(font1, 186,79,"Exit", screen)
+        print_text(font1, 186,77,"Exit", screen)
 
         pygame.display.update()
 

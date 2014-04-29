@@ -28,6 +28,12 @@ class Info:
         self.colors = {"white":(255,255,255), "black":(0,0,0),"red":(200,0,0),\
               "green":(0,200,0),"dgrey":(200,200,200), "lgrey":(225,225,225)}
 def main():
+    """
+    This is the main loop which creates the info object that is passed around.
+    It the retrieves the files and images we will be using. Depending on
+    info.state (default "menu"), the while loop will be displaying different
+    views with different inputs.
+    """
 
     info = Info()
 
@@ -48,7 +54,7 @@ def main():
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
                     mouse_down_x,mouse_down_y = event.pos
-                    menu_keyboard(mouse_down_x,mouse_down_y,info)
+                    menu_touch_input(mouse_down_x,mouse_down_y,info)
             menu(info)
 
 
@@ -65,6 +71,16 @@ def main():
         pygame.display.update()
 
 def new_file(info, keyboard):
+    '''
+    The view for a new file. User is able to name and create new file or go to
+    menu.
+
+    @param info: object with our configurations and states
+    @type info: Info
+    @param keyboard: keyboard image
+    @type keyboard: pygame.Surface
+    '''
+
     info.screen.fill((info.colors["dgrey"]))
     info.screen.blit(keyboard, (0,110))
 
@@ -85,6 +101,25 @@ def new_file(info, keyboard):
     print_text(info.font1, 186,79,"Exit", info.screen)
 
 def menu(info):
+    """
+    The view for the menu. User is able to create, delete, and rename a file, or
+    exit on the left panel. On the bottom panel, user is able to flip pages, or
+    select the currently selected file in the top right panel.
+
+    Menu View:
+    -----------
+    |  | file |
+    |t | file |
+    |o | etc. |
+    |p |      |
+    |  |      |
+    |  |-------
+    |  | bot  |
+    -----------
+
+    @param info: object with our configurations and states
+    @type info: Info
+    """
     info.screen.fill((info.colors["white"]))
 
     pygame.draw.rect(info.screen, (150,150,150), (0,240,240,60))
@@ -96,7 +131,7 @@ def menu(info):
                time.strftime("%Y-%m-%d                     %X"), \
                info.screen, color=info.colors["white"])
 
-    column = 5
+    column = 0
 
     for i in range(0,6):
         i += info.page*6
@@ -147,36 +182,66 @@ def menu(info):
 
 
 def print_text(font, x, y, text, screen, color=(0,0,0)):
+    """
+    This will draw text at desired x,y coordinate on the given surface with
+    given color.
+
+    @param font: pygame's font object
+    @type font: pygame.font.Font
+    @param x: x coordinate of text starting with left most pixel
+    @type x: int
+    @param y: y coordinate of text starting with top most pixel
+    @type y: int
+    @param text: The text to be drawn
+    @type text: string
+    @param screen: The pygame surface we want to draw on
+    @type screen: pygame.Surface
+    @param color: RGB color for text
+    @type color: tuple
+
+    """
     imgText = font.render(text, True, color)
     screen.blit(imgText, (x,y))
 
 def close_file():
     sys.exit()
 
-def menu_keyboard(x,y,info):
-    if x < 58 and y < 300: #left menu
+def menu_touch_input(x,y,info):
+    """
+    Takes the touchscreen's input and runs the appropriate action depending on
+    the location of the pixels input.
+
+    @param x: x coordinate in pixels
+    @type x: int
+    @param y: y coordinate in pixels
+    @type y: int
+    @param info: object with our configurations and states
+    @type info: Info
+
+    """
+    if x < 58 and y < 300:                     # left menu
         y = y/75
-        if y == 0:
+        if y == 0:                                 # new file
             info.state = "new_file"
-        elif y == 1:
-            pass #rename
-        elif y == 2:
-            pass #delete
-        elif y == 3:
+        elif y == 1:                               # rename
+            pass
+        elif y == 2:                               # delete
+            pass
+        elif y == 3:                               # exit
             sys.exit()
-    elif x > 62 and y > 240: # bottom navigation
+    elif x > 62 and y > 240:                   # bottom navigation
         x = x/60
-        if x == 1:
+        if x == 1:                                 # previous page
             if info.page > 0:
-                info.page -= 1 #previous page
+                info.page -= 1
                 info.select = None
-        if x == 2:
-            pass #select files
-        elif x == 3:
+        if x == 2:                                 # select files
+            pass
+        elif x == 3:                               # next page
             if info.page < len(info.files)/6:
-                info.page = info.page + 1 #next page
+                info.page = info.page + 1
                 info.select = None
-    elif x > 62 and y < 240: #file view
+    elif x > 62 and y < 240:                   #file select
         file_index = y/40 + info.page*6
         try:
             info.files[file_index]
@@ -188,8 +253,18 @@ def new_file_keyboard(x,y,info):
     info.state = "menu"
 
 def get_files(info):
+    """
+    Gets the files from a folder and puts them into the info object as a list.
+    Files are named with the date and title separated by a "/"
+
+    @param info: object with our configurations and states
+    @type info: Info
+
+    """
+    folder = "/home/pi/files"
+
     if info.device == "raspberrypi":
-        output = Popen(['ls','/home/pi/files'], stdout=PIPE)
+        output = Popen(['ls',folder], stdout=PIPE)
         info.files = output.stdout.read().replace("\n"," ").split()
     else:
         #output = Popen(['ls','/home/spoon/files'], stdout=PIPE)
