@@ -24,6 +24,7 @@ class Info:
         self.select = None
         self.page = 0
         self.state = "menu"
+        self.rename = None
         self.font1 = pygame.font.Font(None, 24)
         self.colors = {"white":(255,255,255), "black":(0,0,0),"red":(200,0,0),\
               "green":(0,200,0),"dgrey":(200,200,200), "lgrey":(225,225,225)}
@@ -66,11 +67,11 @@ def main():
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
                     mouse_down_x,mouse_down_y = event.pos
-                    menu_touch_input(mouse_down_x,mouse_down_y,info)
+                    menu_touch_input(mouse_down_x,mouse_down_y,info, keyboard)
             menu_view(info)
 
 
-        elif info.state == "new_file":
+        elif info.state == "file_name_view":
             for event in pygame.event.get():
                 if event.type == QUIT:
                     sys.exit()
@@ -78,7 +79,7 @@ def main():
                     mouse_down_x,mouse_down_y = event.pos
                     new_file_touch_input(mouse_down_x, mouse_down_y, \
                                          keyboard, info)
-            new_file_view(info,keyboard)
+            file_name_view(info,keyboard)
 
 
         pygame.display.update()
@@ -163,7 +164,7 @@ def menu_view(info):
         y = 40*info.select - info.page*6*40
         pygame.draw.rect(info.screen, info.colors["black"],(60,y,180,40),1)
 
-def new_file_view(info, keyboard):
+def file_name_view(info, keyboard):
     '''
     The view for a new file. User is able to name and create new file or go to
     menu.
@@ -173,7 +174,6 @@ def new_file_view(info, keyboard):
     @param keyboard: keyboard image
     @type keyboard: pygame.Surface
     '''
-
     info.screen.fill((info.colors["dgrey"]))
     info.screen.blit(keyboard.image, (0,110))
 
@@ -186,11 +186,108 @@ def new_file_view(info, keyboard):
 
     pygame.draw.rect(info.screen, info.colors["black"], (165,5,70,50),2)
     pygame.draw.rect(info.screen, info.colors["green"], (165,5,70,50))
-    print_text(info.font1, 172,25, "Create", info.screen)
-
+    if info.rename is not None:
+        print_text(info.font1, 170,25, "Rename", info.screen)
+    else:
+        print_text(info.font1, 172,25, "Create", info.screen)
     pygame.draw.rect(info.screen, info.colors["black"], (165,60,70,50),2)
     pygame.draw.rect(info.screen, info.colors["red"], (165,60,70,50))
     print_text(info.font1, 172,79,"Cancel", info.screen)
+
+
+
+def close_file():
+    sys.exit()
+
+def menu_touch_input(x,y,info,keyboard):
+    """
+    Takes the touchscreen's input and runs the appropriate action depending on
+    the location of the pixels input.
+
+    @param x: x coordinate in pixels
+    @type x: int
+    @param y: y coordinate in pixels
+    @type y: int
+    @param info: object with our configurations and states
+    @type info: Info
+
+    """
+    if x < 58 and y < 300:                     # left menu
+        y = y/75
+        if y == 0:                                 # new file
+            info.state = "file_name_view"
+        elif y == 1:
+            if info.select is not None:            # rename
+                info.rename = info.files[info.select]
+                keyboard.filename = info.files[info.select].split("=")[1]
+                info.state = "file_name_view"
+        elif y == 2:                               # delete
+            delete_file(info)
+        elif y == 3:                               # exit
+            sys.exit()
+    elif x > 62 and y > 240:                   # bottom navigation
+        x = x/60
+        if x == 1:                                 # previous page
+            if info.page > 0:
+                info.page -= 1
+                info.select = None
+        if x == 2:                                 # select files
+            pass
+        elif x == 3:                               # next page
+            if info.page < len(info.files)/7:
+                info.page = info.page + 1
+                info.select = None
+    elif x > 62 and y < 240:                   #file highlight
+        file_index = y/40 + info.page*6
+        try:
+            info.files[file_index]
+            info.select = file_index
+        except:
+            print "no file in selected space"
+
+def new_file_touch_input(x,y,keyboard,info):
+    if y >110:
+        x = x/24
+        y = (y-110)/30
+        key = keyboard.alphabet[y][x]
+        if key is "shift":
+            if keyboard.caps is True:
+                keyboard.caps = False
+            else:
+                keyboard.caps = True
+        elif key is "back":
+            keyboard.filename = keyboard.filename[:-1]
+        else:
+            if key.isalpha():
+                if keyboard.caps is False:
+                    key = key.lower()
+            keyboard.filename = keyboard.filename + key
+    elif x >165 :
+        if y < 55:
+            if info.rename:
+                rename_file(keyboard.filename,info)
+            else:
+                create_file(keyboard.filename,info)
+            keyboard.filename = ""
+            info.state = "menu"
+            info.rename = None
+        else:
+            keyboard.filename = ""
+            info.state = "menu"
+            info.rename = None
+
+def rename_file(filename,info):
+    filename = info.rename.split("=")[0]+"="+filename
+    print filename
+    if info.device == "raspberrypi":
+        current = "/home/pi/files/"+info.rename
+        new = "/home/pi/files/"+filename
+    else:
+        current = "/home/spoon/files/"+info.rename
+        new = "/home/spoon/files/"+filename
+
+    os.rename(current, new)
+    get_files(info)
 
 def delete_file(info):
     """
@@ -237,88 +334,11 @@ def delete_file(info):
         get_files(info)
         info.select = None
 
-
-
-
-
-def close_file():
-    sys.exit()
-
-def menu_touch_input(x,y,info):
-    """
-    Takes the touchscreen's input and runs the appropriate action depending on
-    the location of the pixels input.
-
-    @param x: x coordinate in pixels
-    @type x: int
-    @param y: y coordinate in pixels
-    @type y: int
-    @param info: object with our configurations and states
-    @type info: Info
-
-    """
-    if x < 58 and y < 300:                     # left menu
-        y = y/75
-        if y == 0:                                 # new file
-            info.state = "new_file"
-        elif y == 1:                               # rename
-            pass
-        elif y == 2:                               # delete
-            delete_file(info)
-        elif y == 3:                               # exit
-            sys.exit()
-    elif x > 62 and y > 240:                   # bottom navigation
-        x = x/60
-        if x == 1:                                 # previous page
-            if info.page > 0:
-                info.page -= 1
-                info.select = None
-        if x == 2:                                 # select files
-            pass
-        elif x == 3:                               # next page
-            if info.page < len(info.files)/7:
-                info.page = info.page + 1
-                info.select = None
-    elif x > 62 and y < 240:                   #file highlight
-        file_index = y/40 + info.page*6
-        try:
-            info.files[file_index]
-            info.select = file_index
-        except:
-            print "no file in selected space"
-
-def new_file_touch_input(x,y,keyboard,info):
-    if y >110:
-        x = x/24
-        y = (y-110)/30
-        key = keyboard.alphabet[y][x]
-        if key is "shift":
-            if keyboard.caps is True:
-                keyboard.caps = False
-            else:
-                keyboard.caps = True
-        elif key is "back":
-            keyboard.filename = keyboard.filename[:-1]
-        else:
-            if key.isalpha():
-                if keyboard.caps is False:
-                    key = key.lower()
-            keyboard.filename = keyboard.filename + key
-    elif x >165 :
-        if y < 55:
-            create_file(keyboard.filename,info);
-            keyboard.filename = ""
-            info.state = "menu"
-        else:
-            keyboard.filename = ""
-            info.state = "menu"
-
 def create_file(filename,info):
     date_filename = time.strftime("%Y-%m-%d %I:%M%p") +"="+filename
     fo = open("/home/spoon/files/"+date_filename, "a")
     fo.close()
     get_files(info)
-
 
 def get_files(info):
     """
