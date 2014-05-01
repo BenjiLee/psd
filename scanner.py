@@ -1,25 +1,37 @@
-import sys, pygame,os
-import time
+import sys, pygame, os, time
 from subprocess import Popen, PIPE
 from pygame.locals import *
+
+from helpers.settings import print_text
 
 class Info:
     def __init__(self):
         output = Popen(['hostname'], stdout=PIPE)
         self.device = output.stdout.read().replace("\n", "") #Set device
+        
         if self.device == "raspberrypi":
+            self.pi = True
+        else:
+            self.pi = False
+            
+        if self.pi:
             os.putenv('SDL_VIDEODRIVER', 'fbcon')
             os.putenv('SDL_FBDEV'      , '/dev/fb1')
             os.putenv('SDL_MOUSEDRV'   , 'TSLIB')
             os.putenv('SDL_MOUSEDEV'   , '/dev/input/touchscreen')
+            
         pygame.init()
 
-        if self.device == "raspberrypi":
+        if self.pi:
             modes = pygame.display.list_modes(16)
             self.screen = pygame.display.set_mode(modes[0], FULLSCREEN, 16)
             pygame.mouse.set_visible(False)
         else:
             self.screen = pygame.display.set_mode((240,320))
+
+        output = Popen("echo $USER", stdout=PIPE, shell=True)
+        self.user = output.stdout.read().replace("\n","") #Get user name for folders
+        self.folder = "/home/"+self.user+"/files/"
 
         self.select = None
         self.page = 0
@@ -39,7 +51,7 @@ class Keyboard():
             ('_','+','-','=','{','}',"'",'"','<','>'),
             ('?','`','~','','\\',"shift","shift",' ',' ',' '))
         self.caps = False
-        if info.device == "raspberrypi":
+        if info.pi:
             self.image = pygame.image.load("/home/pi/psd/keyboard.png").convert()
         else:
             self.image = pygame.image.load("keyboard.png").convert()
@@ -298,13 +310,8 @@ def rename_file(filename,info):
     @type info: Info
     """
     filename = info.rename.split("=")[0]+"="+filename
-    if info.device == "raspberrypi":
-        current = "/home/pi/files/"+info.rename
-        new = "/home/pi/files/"+filename
-    else:
-        current = "/home/spoon/files/"+info.rename
-        new = "/home/spoon/files/"+filename
-
+    current = info.folder+info.rename
+    new = info.folder+filename
     os.rename(current, new)
     get_files(info)
 
@@ -345,17 +352,16 @@ def delete_file(info):
 
         pygame.display.update()
     if delete:
-        if info.device == "raspberrypi":
-            folder = "/home/pi/files/"
-        else:
-            folder = "/home/spoon/files/"
-        os.remove(folder+info.files[info.select])
+        os.remove(info.folder+info.files[info.select])
         get_files(info)
         info.select = None
 
 def create_file(filename,info):
     date_filename = time.strftime("%Y-%m-%d %I:%M%p") +"="+filename
-    fo = open("/home/spoon/files/"+date_filename, "a")
+
+    fo = open(info.folder+date_filename, "a")
+
+
     fo.close()
     get_files(info)
 
@@ -368,13 +374,11 @@ def get_files(info):
     @type info: Info
 
     """
-    folder = "/home/pi/files"
+    output = Popen(['ls',info.folder], stdout=PIPE)
 
-    if info.device == "raspberrypi":
-        output = Popen(['ls',folder], stdout=PIPE)
+    if info.pi:
         info.files = output.stdout.read().replace("\n"," ").split()
     else:
-        output = Popen(['ls','/home/spoon/files'], stdout=PIPE)
         info.files = output.stdout.read().split("\n")
         info.files = info.files[:-1]
         #info.files = ["2014-3-21 8:22=a","2014-3-21 8:25=b","2014-3-22 8:27=c",\
@@ -382,27 +386,6 @@ def get_files(info):
         #             "2014-3-23 9:32=g","2014-3-24 10:12=h","2014-3-25 6:22=i"]
 
 
-def print_text(font, x, y, text, screen, color=(0,0,0)):
-    """
-    This will draw text at desired x,y coordinate on the given surface with
-    given color.
-
-    @param font: pygame's font object
-    @type font: pygame.font.Font
-    @param x: x coordinate of text starting with left most pixel
-    @type x: int
-    @param y: y coordinate of text starting with top most pixel
-    @type y: int
-    @param text: The text to be drawn
-    @type text: string
-    @param screen: The pygame surface we want to draw on
-    @type screen: pygame.Surface
-    @param color: RGB color for text
-    @type color: tuple
-
-    """
-    imgText = font.render(text, True, color)
-    screen.blit(imgText, (x,y))
 
 if __name__ == "__main__":
     main()
