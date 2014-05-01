@@ -44,7 +44,7 @@ def delete_file(info):
 
     delete = False
     break_loop = False
-    while info.select is not None and not break_loop:
+    while info.selected is not None and not break_loop:
         for event in pygame.event.get():
             if event.type == MOUSEBUTTONDOWN:
                 x,y = event.pos
@@ -70,9 +70,9 @@ def delete_file(info):
 
         pygame.display.update()
     if delete:
-        os.remove(info.folder+info.files[info.select])
+        os.remove(info.folder+info.files[info.selected])
         get_files(info)
-        info.select = None
+        info.selected = None
 
 def create_file(filename,info):
     date_filename = time.strftime("%Y-%m-%d %I:%M%p") +"="+filename

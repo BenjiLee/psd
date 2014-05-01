@@ -24,9 +24,9 @@ def menu_touchscreen_input(x,y,info,keyboard):
         if y == 0:                                 # new file
             info.state = "file_name_view"
         elif y == 1:
-            if info.select is not None:            # rename
-                info.rename = info.files[info.select]
-                keyboard.filename = info.files[info.select].split("=")[1]
+            if info.selected is not None:            # rename
+                info.rename = info.files[info.selected]
+                keyboard.filename = info.files[info.selected].split("=")[1]
                 info.state = "file_name_view"
         elif y == 2:                               # delete
             f.delete_file(info)
@@ -37,18 +37,18 @@ def menu_touchscreen_input(x,y,info,keyboard):
         if x == 1:                                 # previous page
             if info.page > 0:
                 info.page -= 1
-                info.select = None
+                info.selected = None
         if x == 2:                                 # select files
             pass
         elif x == 3:                               # next page
             if info.page < len(info.files)/7:
                 info.page = info.page + 1
-                info.select = None
+                info.selected = None
     elif x > 62 and y < 240:                   #file highlight
         file_index = y/40 + info.page*6
         try:
             info.files[file_index]
-            info.select = file_index
+            info.selected = file_index
         except:
             print "no file in selected space"
 

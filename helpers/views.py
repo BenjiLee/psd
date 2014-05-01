@@ -84,8 +84,8 @@ def menu_view(info):
     pygame.draw.rect(info.screen, info.colors["lgrey"], (182,244,54, 52))
     print_text(info.font1, 191, 262, "Next", info.screen)
 
-    if info.select is not None:
-        y = 40*info.select - info.page*6*40
+    if info.selected is not None:
+        y = 40*info.selected - info.page*6*40
         pygame.draw.rect(info.screen, info.colors["black"],(60,y,180,40),1)
 
 def file_name_view(info, keyboard):
