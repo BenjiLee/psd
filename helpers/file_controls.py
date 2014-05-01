@@ -4,13 +4,19 @@ The file_controls file contains all the functions that deal with manipulating th
 
 """
 
-import os,time
+import os,time, sys
 from subprocess import PIPE, Popen
 
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN
 
 from helpers.settings import print_text
+
+def close_file():
+    """
+    This isn't used yet
+    """
+    sys.exit()
 
 def rename_file(filename,info):
     """

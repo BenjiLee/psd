@@ -1,5 +1,6 @@
-__author__ = 'chris'
-
+"""
+Miscellaneous functions such the text renderer.
+"""
 
 def print_text(font, x, y, text, screen, color=(0,0,0)):
     """
