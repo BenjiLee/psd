@@ -5,8 +5,18 @@ import sys
 
 import helpers.file_controls as f
 
+def selection_view_touch_input(x,y,info):
+    """
+    Takes in touchscreen inputs for the file editing view.
+    """
+    pass
 
-def menu_touchscreen_input(x,y,info,keyboard):
+def selection_view_key_input():
+    """
+    Takes in the barcode scanner keys.
+    """
+
+def menu_view_input(x,y,info,keyboard):
     """
     Takes the touchscreen's input and runs the appropriate action depending on
     the location of the pixels input.
@@ -22,12 +32,12 @@ def menu_touchscreen_input(x,y,info,keyboard):
     if x < 58 and y < 300:                     # left menu
         y = y/75
         if y == 0:                                 # new file
-            info.state = "file_name_view"
+            info.view = "filename_view"
         elif y == 1:
             if info.selected is not None:            # rename
-                info.rename = info.files[info.selected]
+                info.filename = info.files[info.selected]
                 keyboard.filename = info.files[info.selected].split("=")[1]
-                info.state = "file_name_view"
+                info.view = "filename_view"
         elif y == 2:                               # delete
             f.delete_file(info)
         elif y == 3:                               # exit
@@ -39,7 +49,10 @@ def menu_touchscreen_input(x,y,info,keyboard):
                 info.page -= 1
                 info.selected = None
         if x == 2:                                 # select files
-            pass
+            if info.selected is not None:
+                info.filename = info.files[info.selected]
+                f.open_file(info)
+                info.view = "selection_view"
         elif x == 3:                               # next page
             if info.page < len(info.files)/7:
                 info.page = info.page + 1
@@ -52,7 +65,7 @@ def menu_touchscreen_input(x,y,info,keyboard):
         except:
             print "no file in selected space"
 
-def new_file_touchscreen_input(x,y,keyboard,info):
+def new_file_view_input(x,y,keyboard,info):
     """
     Takes the touchscreen's input and runs the appropriate action depending on
     the location of the pixels input.
@@ -83,14 +96,14 @@ def new_file_touchscreen_input(x,y,keyboard,info):
             keyboard.filename = keyboard.filename + key
     elif x >165 :
         if y < 55:
-            if info.rename:
+            if info.filename:
                 f.rename_file(keyboard.filename,info)
             else:
                 f.create_file(keyboard.filename,info)
             keyboard.filename = ""
-            info.state = "menu"
-            info.rename = None
+            info.view = "menu_view"
+            info.filename = None
         else:
             keyboard.filename = ""
-            info.state = "menu"
-            info.rename = None
+            info.view = "menu_view"
+            info.filename = None

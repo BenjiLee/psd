@@ -5,8 +5,61 @@ This file contains the views that are selected by "state" in scanner.py.
 import time
 
 import pygame
-
 from settings import print_text
+
+
+def selection_view(info):
+    """
+    The view for the selected file. By scanning a barcode, an entry will be
+    appended. A selected entry can be deleted.
+
+    @param info: object with our configurations and states
+    @type info: Info
+    """
+    info.screen.fill((info.colors["white"]))
+    pygame.draw.line(info.screen, info.colors["black"], (120,0), (120,320), )
+    pygame.draw.rect(info.screen, (150,150,150), (0,240,240,60))
+
+    #Bottom bar for time and date
+    pygame.draw.rect(info.screen, (50,50,50), (0,300,240,20))
+    print_text(info.font1, 5, 303, \
+               time.strftime("%Y-%m-%d                     %X"), \
+               info.screen, color=info.colors["white"])
+
+    #TODO change to display lines in text file
+    column = 0
+    if info.files is not None:
+        for i in range(0,6):
+            i += info.page*6
+            if i >= len(info.files):
+                break
+            date, name = info.files[i].split("=")
+            print_text(info.font1, 65, column, name, info.screen)
+            print_text(info.font1, 75, (column+20), date, info.screen)
+            column += 40
+
+
+    #Navigation bar
+    pygame.draw.rect(info.screen, info.colors["black"], (3,243,56,54),2)
+    pygame.draw.rect(info.screen, info.colors["red"], (4,244,54,52))
+    print_text(info.font1, 10, 262, "Close", info.screen)
+
+    pygame.draw.rect(info.screen, info.colors["black"], (63,243,56,54),2)
+    pygame.draw.rect(info.screen, info.colors["lgrey"], (64,244,54,52))
+    print_text(info.font1, 72, 262, "Back", info.screen)
+
+    pygame.draw.rect(info.screen, info.colors["black"], (122,243,56,54),2)
+    pygame.draw.rect(info.screen, info.colors["pink"], (123,244,54,52))
+    print_text(info.font1, 125, 262, "Delete", info.screen)
+
+    pygame.draw.rect(info.screen, info.colors["black"], (181,243,56,54),2)
+    pygame.draw.rect(info.screen, info.colors["lgrey"], (182,244,54, 52))
+    print_text(info.font1, 191, 262, "Next", info.screen)
+
+    #TODO fix this for selecting a different grid
+    if info.selected is not None:
+        y = 40*info.selected - info.page*6*40
+        pygame.draw.rect(info.screen, info.colors["black"],(60,y,180,40),1)
 
 def menu_view(info):
     """
@@ -62,7 +115,7 @@ def menu_view(info):
     print_text(info.font1, 8, 115,  "Name", info.screen)
 
     pygame.draw.rect(info.screen, info.colors["black"], (3,151,54,72),2)
-    pygame.draw.rect(info.screen, info.colors["red"], (4,152,52,70))
+    pygame.draw.rect(info.screen, info.colors["pink"], (4,152,52,70))
     print_text(info.font1, 16, 178,  "Del", info.screen)
 
     pygame.draw.rect(info.screen, info.colors["black"], (3,225,54,72),2)
@@ -110,7 +163,7 @@ def file_name_view(info, keyboard):
 
     pygame.draw.rect(info.screen, info.colors["black"], (165,5,70,50),2)
     pygame.draw.rect(info.screen, info.colors["green"], (165,5,70,50))
-    if info.rename is not None:
+    if info.filename is not None:
         print_text(info.font1, 170,25, "Rename", info.screen)
     else:
         print_text(info.font1, 172,25, "Create", info.screen)

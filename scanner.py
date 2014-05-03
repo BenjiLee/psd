@@ -1,10 +1,9 @@
-import sys, pygame, os, time
-from subprocess import Popen, PIPE
+import sys, pygame
 from pygame.locals import *
 
 import helpers.views as view
 import helpers.file_controls as f
-import helpers.touchscreen_inputs as touch
+import helpers.key_mouse_inputs as touch
 import helpers.classes as classes
 
 
@@ -24,33 +23,41 @@ def main():
 
 
     while True:
-        if info.state == "menu":
+        if info.view == "menu_view":
             for event in pygame.event.get():
                 if event.type == QUIT:
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
                     mouse_down_x,mouse_down_y = event.pos
-                    touch.menu_touchscreen_input(mouse_down_x,mouse_down_y,info, keyboard)
+                    touch.menu_view_input(mouse_down_x,mouse_down_y,
+                                                 info, keyboard)
             view.menu_view(info)
 
-
-        elif info.state == "file_name_view":
+        elif info.view == "filename_view":
             for event in pygame.event.get():
                 if event.type == QUIT:
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
                     mouse_down_x,mouse_down_y = event.pos
-                    touch.new_file_touchscreen_input(mouse_down_x, mouse_down_y, \
-                                         keyboard, info)
+                    touch.new_file_view_input(mouse_down_x, mouse_down_y,
+                                                     keyboard, info)
             view.file_name_view(info,keyboard)
+
+        elif info.view == "selection_view":
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    sys.exit()
+                elif event.type == MOUSEBUTTONDOWN:
+                    mouse_down_x,mouse_down_y = event.pos
+                    touch.selection_view_touch_input(mouse_down_x, mouse_down_y,
+                                                     info)
+                elif event.type == KEYDOWN:
+                    print event.key
+
+            view.selection_view(info)
 
 
         pygame.display.update()
-
-
-
-
-
 
 if __name__ == "__main__":
     main()

@@ -41,15 +41,19 @@ class Info:
 
         self.selected = None
         self.page = 0
-        self.state = "menu"
-        self.rename = None
+        self.view = "menu_view"
+        # self.view = "selection_view"
+        self.filename = None
         self.font1 = pygame.font.Font(None, 24)
-        self.colors = {"white":(255,255,255), "black":(0,0,0),"red":(200,0,0),\
-              "green":(0,200,0),"dgrey":(200,200,200), "lgrey":(225,225,225)}
+        self.colors = {"white":(255,255,255), "black":(0,0,0),"red":(200,0,0),
+              "green":(0,200,0),"dgrey":(200,200,200), "lgrey":(225,225,225),
+              "pink":(240,120,120)}
 
 class Keyboard():
     """
-    If a view needs a keyboard, this object will be passed in.
+    If a view needs a keyboard, this object will be passed in. "=" has been
+    disabled since we split the filename with it. "/" has been disabled because
+    it is an invalid filename character.
     """
     def __init__(self, info):
         self.alphabet = (('Q','W','E','R','T','Y','U','I','O','P'),

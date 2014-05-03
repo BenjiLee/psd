@@ -1,6 +1,7 @@
 
 """
-The file_controls file contains all the functions that deal with manipulating them.
+The file_controls file contains all the functions that deal with manipulating
+them.
 
 """
 
@@ -18,18 +19,26 @@ def close_file():
     """
     sys.exit()
 
-def rename_file(filename,info):
+def open_file(info):
+
+    with open(info.folder+info.filename,"r+") as f:
+        info.barcodes = f.readlines()
+    print info.barcodes
+
+
+
+def rename_file(new_name,info):
     """
     Takes the new name and renames the file.
 
-    @param filename: new name of the file
-    @type filename: string
+    @param new_name: new name of the file
+    @type new_namee: string
     @param info: object with our configurations and states
     @type info: Info
     """
-    filename = info.rename.split("=")[0]+"="+filename
-    current = info.folder+info.rename
-    new = info.folder+filename
+    new_name = info.filename.split("=")[0]+"="+new_name
+    current = info.folder+info.filename
+    new = info.folder+new_name
     os.rename(current, new)
     get_files(info)
 
@@ -75,11 +84,20 @@ def delete_file(info):
         info.selected = None
 
 def create_file(filename,info):
-    date_filename = time.strftime("%Y-%m-%d %I:%M%p") +"="+filename
+    """
+    This function creates the file by combining the date/time and name
+    separated by a "=".
 
+    @param info: object with our configurations and states
+    @type info: Info
+    @param filename: name of the new file
+    @type filename: string
+
+    """
+    date_filename = time.strftime("%Y-%m-%d %I:%M%p") +"="+filename
     fo = open(info.folder+date_filename, "a")
 
-
+    #TODO When select file is implemented, decide if we go to select or menu.
     fo.close()
     get_files(info)
 
@@ -94,14 +112,11 @@ def get_files(info):
     """
     output = Popen(['ls',info.folder], stdout=PIPE)
 
-    if info.pi:
-        info.files = output.stdout.read().replace("\n"," ").split()
-    else:
-        info.files = output.stdout.read().split("\n")
-        info.files = info.files[:-1]
-        """
-        When working in windows
-        info.files = ["2014-3-21 8:22=a","2014-3-21 8:25=b","2014-3-22 8:27=c",\
-                     "2014-3-23 9:32=d","2014-3-24 10:12=e","2014-3-25 6:22=f",\
-                     "2014-3-23 9:32=g","2014-3-24 10:12=h","2014-3-25 6:22=i"]
-        """
+    info.files = output.stdout.read().split("\n")
+    info.files = info.files[:-1]
+    """
+    When working in windows
+    info.files = ["2014-3-21 8:22=a","2014-3-21 8:25=b","2014-3-22 8:27=c",\
+                 "2014-3-23 9:32=d","2014-3-24 10:12=e","2014-3-25 6:22=f",\
+                 "2014-3-23 9:32=g","2014-3-24 10:12=h","2014-3-25 6:22=i"]
+    """
