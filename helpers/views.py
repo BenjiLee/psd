@@ -111,8 +111,8 @@ def menu_view(info):
 
     pygame.draw.rect(info.screen, info.colors["black"], (3,77,54,72),2)
     pygame.draw.rect(info.screen, info.colors["lgrey"], (4,78,52,70))
-    print_text(info.font1, 16, 95,  "Re-", info.screen)
-    print_text(info.font1, 8, 115,  "Name", info.screen)
+    print_text(info.font1, 11, 95,  "Com-", info.screen)
+    print_text(info.font1, 13, 115,  "bine", info.screen)
 
     pygame.draw.rect(info.screen, info.colors["black"], (3,151,54,72),2)
     pygame.draw.rect(info.screen, info.colors["pink"], (4,152,52,70))
