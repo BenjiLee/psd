@@ -1,5 +1,7 @@
 import os
 from subprocess import PIPE, Popen
+from collections import defaultdict
+
 
 import pygame
 from pygame.locals import FULLSCREEN
@@ -40,14 +42,17 @@ class Info:
         self.folder = "/home/"+self.user+"/files/"
 
         self.selected = None
+        self.upc_list= []
         self.page = 0
         self.view = "menu_view"
+        self.barcode = ""
         # self.view = "selection_view"
         self.filename = None
         self.font1 = pygame.font.Font(None, 24)
         self.colors = {"white":(255,255,255), "black":(0,0,0),"red":(200,0,0),
               "green":(0,200,0),"dgrey":(200,200,200), "lgrey":(225,225,225),
               "pink":(240,120,120)}
+        self.upc_qty = defaultdict(int)
 
 class Keyboard():
     """

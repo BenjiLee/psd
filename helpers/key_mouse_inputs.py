@@ -2,6 +2,7 @@
 This file contains all the functions that control the touchscreen inputs for the given pixel location and view.
 """
 import sys
+from collections import defaultdict
 
 import helpers.file_controls as f
 
@@ -9,12 +10,32 @@ def selection_view_touch_input(x,y,info):
     """
     Takes in touchscreen inputs for the file editing view.
     """
-    pass
+    x = x/80
+    y = y/60
+    if y > 3 and y < 5:
+        if x == 0:
+            info.barcode = ""
+            info.upc_qty = {}
+            info.view = "menu_view"
+            info.selected = None
+        elif x == 1:
+            f.write_to_file(info)
+        elif x == 2:
+            print "delete"
 
-def selection_view_key_input():
+def selection_view_key_input(info, char):
     """
-    Takes in the barcode scanner keys.
+    Takes in the barcode scanner character.
     """
+    if char != "end":
+        info.barcode = info.barcode + char
+    else:
+        info.upc_qty[info.barcode] += 1
+        info.barcode = ""
+        print info.upc_qty.items()
+
+
+
 
 def menu_view_input(x,y,info,keyboard):
     """
@@ -53,6 +74,7 @@ def menu_view_input(x,y,info,keyboard):
                 info.filename = info.files[info.selected]
                 f.open_file(info)
                 info.view = "selection_view"
+                info.selected = None
         elif x == 3:                               # next page
             if info.page < len(info.files)/7:
                 info.page = info.page + 1

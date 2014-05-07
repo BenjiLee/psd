@@ -3,7 +3,7 @@ from pygame.locals import *
 
 import helpers.views as view
 import helpers.file_controls as f
-import helpers.key_mouse_inputs as touch
+import helpers.key_mouse_inputs as kvm
 import helpers.classes as classes
 
 
@@ -29,7 +29,7 @@ def main():
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
                     mouse_down_x,mouse_down_y = event.pos
-                    touch.menu_view_input(mouse_down_x,mouse_down_y,
+                    kvm.menu_view_input(mouse_down_x,mouse_down_y,
                                                  info, keyboard)
             view.menu_view(info)
 
@@ -39,7 +39,7 @@ def main():
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
                     mouse_down_x,mouse_down_y = event.pos
-                    touch.new_file_view_input(mouse_down_x, mouse_down_y,
+                    kvm.new_file_view_input(mouse_down_x, mouse_down_y,
                                                      keyboard, info)
             view.file_name_view(info,keyboard)
 
@@ -48,11 +48,15 @@ def main():
                 if event.type == QUIT:
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
+                    #TODO need a new view for this
                     mouse_down_x,mouse_down_y = event.pos
-                    touch.selection_view_touch_input(mouse_down_x, mouse_down_y,
+                    kvm.selection_view_touch_input(mouse_down_x, mouse_down_y,
                                                      info)
                 elif event.type == KEYDOWN:
-                    print event.key
+                    if event.key == 13:
+                        kvm.selection_view_key_input(info, "end")
+                    else:
+                        kvm.selection_view_key_input(info, chr(event.key))
 
             view.selection_view(info)
 

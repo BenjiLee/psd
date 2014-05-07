@@ -5,7 +5,7 @@ them.
 
 """
 
-import os,time, sys
+import os,time, sys, csv
 from subprocess import PIPE, Popen
 
 import pygame
@@ -13,17 +13,29 @@ from pygame.locals import MOUSEBUTTONDOWN
 
 from helpers.settings import print_text
 
-def close_file():
-    """
-    This isn't used yet
-    """
-    sys.exit()
+
+def write_to_file(info):
+    start = time.clock()
+    with open(info.folder+info.filename, 'wb') as f:
+        writer = csv.writer(f)
+        for upc,qty  in info.upc_qty.items():
+            writer.writerow([upc,str(qty)])
+
+    print (time.clock() - start)*1000
+
 
 def open_file(info):
+    """
+    Opens selected csv file, which will then be saved to a dictionary.
 
-    with open(info.folder+info.filename,"r+") as f:
-        info.barcodes = f.readlines()
-    print info.barcodes
+    @param info: object with our configurations and states
+    @type info: Info
+    """
+    reader = csv.reader(open(info.folder+info.filename), delimiter=',')
+    for row in reader:
+        info.upc_qty[row[0]]=int(row[1])
+    print "Intial:"
+    print info.upc_qty.items()
 
 
 

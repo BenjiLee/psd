@@ -40,21 +40,18 @@ def selection_view(info):
 
 
     #Navigation bar
-    pygame.draw.rect(info.screen, info.colors["black"], (3,243,56,54),2)
-    pygame.draw.rect(info.screen, info.colors["red"], (4,244,54,52))
-    print_text(info.font1, 10, 262, "Close", info.screen)
+    pygame.draw.rect(info.screen, info.colors["black"], (3,243,76,54),2)
+    pygame.draw.rect(info.screen, info.colors["red"], (4,244,74,52))
+    print_text(info.font1, 20, 262, "Close", info.screen)
 
-    pygame.draw.rect(info.screen, info.colors["black"], (63,243,56,54),2)
-    pygame.draw.rect(info.screen, info.colors["lgrey"], (64,244,54,52))
-    print_text(info.font1, 72, 262, "Back", info.screen)
+    pygame.draw.rect(info.screen, info.colors["black"], (83,243,76,54),2)
+    pygame.draw.rect(info.screen, info.colors["green"], (84,244,74,52))
+    print_text(info.font1, 100, 262, "Save", info.screen)
 
-    pygame.draw.rect(info.screen, info.colors["black"], (122,243,56,54),2)
-    pygame.draw.rect(info.screen, info.colors["pink"], (123,244,54,52))
-    print_text(info.font1, 125, 262, "Delete", info.screen)
+    pygame.draw.rect(info.screen, info.colors["black"], (162,243,76,54),2)
+    pygame.draw.rect(info.screen, info.colors["pink"], (163,244,74,52))
+    print_text(info.font1, 175, 262, "Delete", info.screen)
 
-    pygame.draw.rect(info.screen, info.colors["black"], (181,243,56,54),2)
-    pygame.draw.rect(info.screen, info.colors["lgrey"], (182,244,54, 52))
-    print_text(info.font1, 191, 262, "Next", info.screen)
 
     #TODO fix this for selecting a different grid
     if info.selected is not None:
