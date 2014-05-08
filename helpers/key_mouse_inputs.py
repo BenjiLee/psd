@@ -25,16 +25,17 @@ def selection_view_touch_input(x,y,info):
 
 def selection_view_key_input(info, char):
     """
-    Takes in the barcode scanner character.
+    Takes in the barcode scanner character and concatenates it until the "end"
+    string is input.
     """
     if char != "end":
         info.barcode = info.barcode + char
     else:
         info.upc_qty[info.barcode] += 1
+        info.last_upc_qty = {"upc":info.barcode,"qty":info.upc_qty[info.barcode]}
+        print info.last_upc_qty
         info.barcode = ""
         print info.upc_qty.items()
-
-
 
 
 def menu_view_input(x,y,info,keyboard):

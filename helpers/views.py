@@ -17,27 +17,25 @@ def selection_view(info):
     @type info: Info
     """
     info.screen.fill((info.colors["white"]))
-    pygame.draw.line(info.screen, info.colors["black"], (120,0), (120,320), )
+
     pygame.draw.rect(info.screen, (150,150,150), (0,240,240,60))
+    pygame.draw.rect(info.screen, info.colors["lgrey"], (0,50,240,125))
+    pygame.draw.rect(info.screen, info.colors["white"], (10,85,220,20))
+    pygame.draw.rect(info.screen, info.colors["white"], (10,135,220,20))
+
+    print_text(info.font1, 5, 60, "UPC:", info.screen)
+    print_text(info.font1, 5, 110, "Quantity:", info.screen)
+
+    print_text(info.font1, 15, 85, info.last_upc_qty["upc"], info.screen)
+    print_text(info.font1, 15, 135, str(info.last_upc_qty["qty"]), info.screen)
+
+
 
     #Bottom bar for time and date
     pygame.draw.rect(info.screen, (50,50,50), (0,300,240,20))
     print_text(info.font1, 5, 303, \
                time.strftime("%Y-%m-%d                     %X"), \
                info.screen, color=info.colors["white"])
-
-    #TODO change to display lines in text file
-    column = 0
-    if info.files is not None:
-        for i in range(0,6):
-            i += info.page*6
-            if i >= len(info.files):
-                break
-            date, name = info.files[i].split("=")
-            print_text(info.font1, 65, column, name, info.screen)
-            print_text(info.font1, 75, (column+20), date, info.screen)
-            column += 40
-
 
     #Navigation bar
     pygame.draw.rect(info.screen, info.colors["black"], (3,243,76,54),2)
@@ -51,12 +49,6 @@ def selection_view(info):
     pygame.draw.rect(info.screen, info.colors["black"], (162,243,76,54),2)
     pygame.draw.rect(info.screen, info.colors["pink"], (163,244,74,52))
     print_text(info.font1, 175, 262, "Delete", info.screen)
-
-
-    #TODO fix this for selecting a different grid
-    if info.selected is not None:
-        y = 40*info.selected - info.page*6*40
-        pygame.draw.rect(info.screen, info.colors["black"],(60,y,180,40),1)
 
 def menu_view(info):
     """
@@ -90,16 +82,16 @@ def menu_view(info):
                time.strftime("%Y-%m-%d                     %X"), \
                info.screen, color=info.colors["white"])
 
-    column = 0
+    row = 0
     if info.files is not None:
         for i in range(0,6):
             i += info.page*6
             if i >= len(info.files):
                 break
             date, name = info.files[i].split("=")
-            print_text(info.font1, 65, column, name, info.screen)
-            print_text(info.font1, 75, (column+20), date, info.screen)
-            column += 40
+            print_text(info.font1, 65, row, name, info.screen)
+            print_text(info.font1, 75, (row+20), date, info.screen)
+            row += 40
 
     #Left Menu
     pygame.draw.rect(info.screen, info.colors["black"], (3,3,54,72),2)

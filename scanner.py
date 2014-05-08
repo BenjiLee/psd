@@ -48,7 +48,6 @@ def main():
                 if event.type == QUIT:
                     sys.exit()
                 elif event.type == MOUSEBUTTONDOWN:
-                    #TODO need a new view for this
                     mouse_down_x,mouse_down_y = event.pos
                     kvm.selection_view_touch_input(mouse_down_x, mouse_down_y,
                                                      info)
@@ -56,7 +55,12 @@ def main():
                     if event.key == 13:
                         kvm.selection_view_key_input(info, "end")
                     else:
-                        kvm.selection_view_key_input(info, chr(event.key))
+                        try:
+                            char = chr(event.key)
+                        except ValueError:
+                            char = ""
+                        kvm.selection_view_key_input(info, char)
+
 
             view.selection_view(info)
 
