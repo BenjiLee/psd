@@ -18,7 +18,7 @@ def write_to_file(info):
     start = time.clock()
     with open(info.folder+info.filename, 'wb') as f:
         writer = csv.writer(f)
-        for upc,qty  in info.upc_qty.items():
+        for upc, qty in info.upc_qty.items():
             writer.writerow([upc,str(qty)])
 
     print (time.clock() - start)*1000

@@ -53,6 +53,13 @@ class Info:
         self.upc_qty = defaultdict(int)
         self.last_upc_qty = {"qty":0,"upc":"-"}
 
+    def reset_view(self, view):
+        self.selected = None
+        self.view = view
+        self.last_upc_qty = {"qty":0,"upc":"-"}
+        self.barcode = ""
+
+
 class Keyboard():
     """
     If a view needs a keyboard, this object will be passed in. "=" has been

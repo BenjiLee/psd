@@ -13,14 +13,12 @@ def selection_view_touch_input(x,y,info):
     x = x/80
     y = y/60
     if y > 3 and y < 5:
-        if x == 0:
-            info.barcode = ""
-            info.upc_qty = {}
-            info.view = "menu_view"
-            info.selected = None
-        elif x == 1:
+        if x == 0:                                      #exit
+            info.reset_view("menu_view")
+        elif x == 1:                                    #save
             f.write_to_file(info)
-        elif x == 2:
+            info.reset_view("menu_view")
+        elif x == 2:                                    #delete
             print "delete"
 
 def selection_view_key_input(info, char):
@@ -54,12 +52,12 @@ def menu_view_input(x,y,info,keyboard):
     if x < 58 and y < 300:                     # left menu
         y = y/75
         if y == 0:                                 # new file
-            info.view = "filename_view"
+            info.reset_view("filename_view")
         elif y == 1:
             if info.selected is not None:            # rename
                 info.filename = info.files[info.selected]
                 keyboard.filename = info.files[info.selected].split("=")[1]
-                info.view = "filename_view"
+                info.reset_view("filename_view")
         elif y == 2:                               # delete
             f.delete_file(info)
         elif y == 3:                               # exit
@@ -74,8 +72,7 @@ def menu_view_input(x,y,info,keyboard):
             if info.selected is not None:
                 info.filename = info.files[info.selected]
                 f.open_file(info)
-                info.view = "selection_view"
-                info.selected = None
+                info.reset_view("selection_view")
         elif x == 3:                               # next page
             if info.page < len(info.files)/7:
                 info.page = info.page + 1
@@ -123,10 +120,7 @@ def new_file_view_input(x,y,keyboard,info):
                 f.rename_file(keyboard.filename,info)
             else:
                 f.create_file(keyboard.filename,info)
-            keyboard.filename = ""
-            info.view = "menu_view"
-            info.filename = None
+            info.reset_view("menu_view")
         else:
             keyboard.filename = ""
-            info.view = "menu_view"
-            info.filename = None
+            info.reset_view("menu_view")
