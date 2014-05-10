@@ -16,8 +16,9 @@ class Info:
     def __init__(self):
         output = Popen(['hostname'], stdout=PIPE)
         self.device = output.stdout.read().replace("\n", "") #Set device
-        
-        if self.device == "root": #gpio runs scanner.py which makes the hostname root
+
+        print self.device
+        if self.device == "raspberrypi":
             self.pi = True
             self.device = "pi"
         else:
@@ -40,6 +41,8 @@ class Info:
 
         output = Popen("echo $USER", stdout=PIPE, shell=True)
         self.user = output.stdout.read().replace("\n","") #user name for folders
+        if self.device == "raspberrypi":
+            self.user = "pi"
         self.folder = "/home/"+self.user+"/files/"
 
 

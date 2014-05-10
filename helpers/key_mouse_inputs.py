@@ -2,7 +2,6 @@
 This file contains all the functions that control the touchscreen inputs for the given pixel location and view.
 """
 import sys
-from collections import defaultdict
 
 import helpers.file_controls as f
 
