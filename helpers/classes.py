@@ -17,8 +17,9 @@ class Info:
         output = Popen(['hostname'], stdout=PIPE)
         self.device = output.stdout.read().replace("\n", "") #Set device
         
-        if self.device == "raspberrypi":
+        if self.device == "root": #gpio runs scanner.py which makes the hostname root
             self.pi = True
+            self.device = "pi"
         else:
             self.pi = False
             

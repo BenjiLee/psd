@@ -49,3 +49,7 @@ Shutdown, scanner gui, wifi setup gui, server gui
 
 To compile gpio.c:
 gcc -o gpio gpio.c -I/usr/local/include -L/usr/local/lib -lwiringPi
+
+To start gpio daemon:
+add "sudo ./home/pi/psd/gpio &" the line before "exit 0"
+

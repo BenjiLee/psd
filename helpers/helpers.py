@@ -32,7 +32,3 @@ def merge_dict(d1,d2,merge_fn=lambda x,y:y):
         else:
             result[k] = v
     return result
-
-a = {"a":1}
-b = {"a":3}
-print merge_dict(a,b,lambda x,y: x+y)
