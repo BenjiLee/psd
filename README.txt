@@ -53,3 +53,25 @@ gcc -o gpio gpio.c -I/usr/local/include -L/usr/local/lib -lwiringPi
 To start gpio daemon:
 add "sudo ./home/pi/psd/gpio &" the line before "exit 0"
 
+To configure samba:
+
+    sudo apt-get install samba
+
+    sudo nano /etc/samba/smb.conf
+
+change
+
+    workgroup = your_workgroup_name
+    wins support = yes
+
+add to end
+    [barcodes]
+       path=/home/pi/barcodes
+       browseable=Yes
+       writeable=Yes
+       only guest=no
+       create mask=0777
+       directory mask=0777
+       public=Yes
+
+To access, find your workgroups name in your local network.

@@ -8,7 +8,6 @@ void scanButton (int button)
         once = 0;
   while (digitalRead (button) == LOW)   // Low is pushed
     if (once ==0) {
-        printf("Button: %d\n", button);
         switch(button)
         {
             case 1:

@@ -70,7 +70,6 @@ def menu_view_input(x,y,info,keyboard):
         if x == 2:                                 # select files
             if info.selected is not None:
                 info.filename = info.files[info.selected]
-                print "filename"+info.filename
                 f.open_file(info)
                 info.reset_view("selection_view")
         elif x == 3:                               # next page
@@ -83,7 +82,7 @@ def menu_view_input(x,y,info,keyboard):
             info.files[file_index]
             info.selected = file_index
         except:
-            print "no file in selected space"
+            pass
 
 def new_file_view_input(x,y,keyboard,info):
     """

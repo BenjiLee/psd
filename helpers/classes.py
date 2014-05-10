@@ -17,7 +17,6 @@ class Info:
         output = Popen(['hostname'], stdout=PIPE)
         self.device = output.stdout.read().replace("\n", "") #Set device
 
-        print self.device
         if self.device == "raspberrypi":
             self.pi = True
         else:
