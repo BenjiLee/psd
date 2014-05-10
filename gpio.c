@@ -18,7 +18,8 @@ void scanButton (int button)
             system ("sudo python /home/pi/psd/wifi.py");
             break;
             case 3:
-            system f("sudo python /home/pi/psd/scanner.py");
+            system ("sudo python /home/pi/psd/scanner.py");
+            break;
         }
         once = 1;
     }
