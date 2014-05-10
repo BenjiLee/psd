@@ -43,37 +43,66 @@ def open_file(info):
 
 def combine_files(info):
     """
-    Combines all available files into one.
+    Will show a pop up window to proceed. Combines all available files into one.
 
     @param info: object with our configurations and states
     @type info: Info
     """
-    path, dir, files = os.walk(info.folder).next()
 
+    combine = False
+    break_loop = False
+    while not break_loop:
+        for event in pygame.event.get():
+            if event.type == MOUSEBUTTONDOWN:
+                x,y = event.pos
+                if x > 40 and x < 200 and y > 145 and y < 185:
+                    if x < 110:
+                        combine = False
+                        break_loop = True
+                    elif x > 130:
+                        combine = True
+                        break_loop = True
 
-    while len(files) > 1:
-        head_dict = defaultdict(int)
-        sub_dict = defaultdict(int)
-        combined = defaultdict(int)
-        head_reader = csv.reader(open(path+files[0]), delimiter=',')
-        sub_reader = csv.reader(open(path+files[1]), delimiter=',')
-        for row in head_reader:
-            head_dict[row[0]] = int(row[1])
-        for row in sub_reader:
-            sub_dict[row[0]] = int(row[1])
+        pygame.draw.rect(info.screen, info.colors["dgrey"], (25,100,190,100))
+        pygame.draw.rect(info.screen, info.colors["black"], (24,99,191,101),2)
+        print_text(info.font1, 50,120, "Combine all files?", info.screen)
 
-        combined = merge_dict(head_dict,sub_dict, lambda x, y: x+y)
-        os.remove(path+files[0])
-        os.remove(path+files[1])
+        pygame.draw.rect(info.screen, info.colors["black"], (39,144,72,42),2)
+        pygame.draw.rect(info.screen, info.colors["lgrey"], (40,145,70,40))
+        print_text(info.font1, 63,155, "No", info.screen)
 
-        with open(info.folder+time.strftime("%Y-%m-%d %I:%M%p") +
-                  "=combined_file", 'w') as f:
-            writer = csv.writer(f)
-            for upc, qty in combined.items():
-                writer.writerow([upc, str(qty)])
-        f.close()
+        pygame.draw.rect(info.screen, info.colors["black"], (129,144,72,42),2)
+        pygame.draw.rect(info.screen, info.colors["lgrey"], (130,145,70,40))
+        print_text(info.font1, 150,155, "Yes", info.screen)
+
+        pygame.display.update()
+
+    if combine is True:
         path, dir, files = os.walk(info.folder).next()
-    get_files(info)
+
+        while len(files) > 1:
+            head_dict = defaultdict(int)
+            sub_dict = defaultdict(int)
+            combined_dict = defaultdict(int)
+            head_reader = csv.reader(open(path+files[0]), delimiter=',')
+            sub_reader = csv.reader(open(path+files[1]), delimiter=',')
+            for row in head_reader:
+                head_dict[row[0]] = int(row[1])
+            for row in sub_reader:
+                sub_dict[row[0]] = int(row[1])
+
+            combined_dict = merge_dict(head_dict,sub_dict, lambda x, y: x+y)
+            os.remove(path+files[0])
+            os.remove(path+files[1])
+
+            with open(info.folder+time.strftime("%Y-%m-%d %I:%M%p") +
+                      "=combined_file", 'w') as f:
+                writer = csv.writer(f)
+                for upc, qty in combined_dict.items():
+                    writer.writerow([upc, str(qty)])
+            f.close()
+            path, dir, files = os.walk(info.folder).next()
+        get_files(info)
 
 def delete_file(info):
     """

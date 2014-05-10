@@ -8,6 +8,7 @@ import pygame
 from settings import print_text
 
 
+
 def selection_view(info):
     """
     The view for the selected file. By scanning a barcode, an entry will be
