@@ -42,7 +42,7 @@ class Info:
         self.user = output.stdout.read().replace("\n","") #user name for folders
         if self.device == "raspberrypi":
             self.user = "pi"
-        self.folder = "/home/"+self.user+"/files/"
+        self.folder = "/home/"+self.user+"/barcodes/"
 
 
         self.selected = None
