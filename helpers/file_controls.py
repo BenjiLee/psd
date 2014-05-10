@@ -7,11 +7,12 @@ them.
 
 import os,time, sys, csv
 from subprocess import PIPE, Popen
+from collections import defaultdict
 
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN
 
-from helpers.settings import print_text
+from helpers.settings import print_text, merge_dict
 
 
 def write_to_file(info):
@@ -21,6 +22,7 @@ def write_to_file(info):
         for upc, qty in info.upc_qty.items():
             writer.writerow([upc,str(qty)])
 
+    get_files(info)
     print (time.clock() - start)*1000
 
 
@@ -31,27 +33,46 @@ def open_file(info):
     @param info: object with our configurations and states
     @type info: Info
     """
+    info.upc_qty = defaultdict(int)
+
     reader = csv.reader(open(info.folder+info.filename), delimiter=',')
     for row in reader:
         info.upc_qty[row[0]]=int(row[1])
-    print "Intial:"
+    print "Initial"
     print info.upc_qty.items()
 
-
-
-def rename_file(new_name,info):
+def combine_files(info):
     """
-    Takes the new name and renames the file.
+    Combines all available files into one.
 
-    @param new_name: new name of the file
-    @type new_namee: string
     @param info: object with our configurations and states
     @type info: Info
     """
-    new_name = info.filename.split("=")[0]+"="+new_name
-    current = info.folder+info.filename
-    new = info.folder+new_name
-    os.rename(current, new)
+    path, dir, files = os.walk(info.folder).next()
+
+
+    while len(files) > 1:
+        head_dict = defaultdict(int)
+        sub_dict = defaultdict(int)
+        combined = defaultdict(int)
+        head_reader = csv.reader(open(path+files[0]), delimiter=',')
+        sub_reader = csv.reader(open(path+files[1]), delimiter=',')
+        for row in head_reader:
+            head_dict[row[0]]=int(row[1])
+        for row in sub_reader:
+            sub_dict[row[0]]=int(row[1])
+
+        combined = merge_dict(head_dict,sub_dict, lambda x, y: x+y)
+        os.remove(path+files[0])
+        os.remove(path+files[1])
+
+        with open(info.folder+time.strftime("%Y-%m-%d %I:%M%p") +
+                  "=combined_file", 'w') as f:
+            writer = csv.writer(f)
+            for upc, qty in combined.items():
+                writer.writerow([upc, str(qty)])
+        f.close()
+        path, dir, files = os.walk(info.folder).next()
     get_files(info)
 
 def delete_file(info):
@@ -111,7 +132,9 @@ def create_file(filename,info):
 
     #TODO When select file is implemented, decide if we go to select or menu.
     fo.close()
-    get_files(info)
+    info.filename = date_filename
+    open_file(info)
+    info.reset_view("selection_view")
 
 def get_files(info):
     """
@@ -122,6 +145,7 @@ def get_files(info):
     @type info: Info
 
     """
+
     output = Popen(['ls',info.folder], stdout=PIPE)
 
     info.files = output.stdout.read().split("\n")

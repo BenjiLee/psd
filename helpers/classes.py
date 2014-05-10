@@ -41,6 +41,7 @@ class Info:
         self.user = output.stdout.read().replace("\n","") #user name for folders
         self.folder = "/home/"+self.user+"/files/"
 
+
         self.selected = None
         self.page = 0
         self.view = "menu_view"
@@ -54,11 +55,16 @@ class Info:
         self.last_upc_qty = {"qty":0,"upc":"-"}
 
     def reset_view(self, view):
+        """
+        Clears data when switching views.
+
+        @param view: The view we are switching to
+        @type view: String
+        """
         self.selected = None
         self.view = view
         self.last_upc_qty = {"qty":0,"upc":"-"}
         self.barcode = ""
-
 
 class Keyboard():
     """

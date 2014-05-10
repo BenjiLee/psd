@@ -152,10 +152,7 @@ def file_name_view(info, keyboard):
 
     pygame.draw.rect(info.screen, info.colors["black"], (165,5,70,50),2)
     pygame.draw.rect(info.screen, info.colors["green"], (165,5,70,50))
-    if info.filename is not None:
-        print_text(info.font1, 170,25, "Rename", info.screen)
-    else:
-        print_text(info.font1, 172,25, "Create", info.screen)
+    print_text(info.font1, 172,25, "Create", info.screen)
     pygame.draw.rect(info.screen, info.colors["black"], (165,60,70,50),2)
     pygame.draw.rect(info.screen, info.colors["red"], (165,60,70,50))
     print_text(info.font1, 172,79,"Cancel", info.screen)

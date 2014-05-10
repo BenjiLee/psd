@@ -19,7 +19,12 @@ def selection_view_touch_input(x,y,info):
             f.write_to_file(info)
             info.reset_view("menu_view")
         elif x == 2:                                    #delete
-            print "delete"
+            if info.last_upc_qty["qty"] != 0:
+                info.upc_qty[info.last_upc_qty["upc"]] -= 1
+                info.last_upc_qty = {"upc": info.last_upc_qty["upc"],
+                                     "qty": info.upc_qty[info.last_upc_qty["upc"]]}
+
+
 
 def selection_view_key_input(info, char):
     """
@@ -31,9 +36,7 @@ def selection_view_key_input(info, char):
     else:
         info.upc_qty[info.barcode] += 1
         info.last_upc_qty = {"upc":info.barcode,"qty":info.upc_qty[info.barcode]}
-        print info.last_upc_qty
         info.barcode = ""
-        print info.upc_qty.items()
 
 
 def menu_view_input(x,y,info,keyboard):
@@ -54,10 +57,7 @@ def menu_view_input(x,y,info,keyboard):
         if y == 0:                                 # new file
             info.reset_view("filename_view")
         elif y == 1:
-            if info.selected is not None:            # rename
-                info.filename = info.files[info.selected]
-                keyboard.filename = info.files[info.selected].split("=")[1]
-                info.reset_view("filename_view")
+            f.combine_files(info)           # combine
         elif y == 2:                               # delete
             f.delete_file(info)
         elif y == 3:                               # exit
@@ -71,6 +71,7 @@ def menu_view_input(x,y,info,keyboard):
         if x == 2:                                 # select files
             if info.selected is not None:
                 info.filename = info.files[info.selected]
+                print "filename"+info.filename
                 f.open_file(info)
                 info.reset_view("selection_view")
         elif x == 3:                               # next page
@@ -114,13 +115,12 @@ def new_file_view_input(x,y,keyboard,info):
                 if keyboard.caps is False:
                     key = key.lower()
             keyboard.filename = keyboard.filename + key
-    elif x >165 :
+    elif x >165:
         if y < 55:
-            if info.filename:
-                f.rename_file(keyboard.filename,info)
-            else:
-                f.create_file(keyboard.filename,info)
-            info.reset_view("menu_view")
+            f.create_file(keyboard.filename, info)
+            info.selected
+            info.reset_view("selection_view")
+            keyboard.filename = ""
         else:
             keyboard.filename = ""
             info.reset_view("menu_view")

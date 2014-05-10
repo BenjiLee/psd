@@ -23,3 +23,16 @@ def print_text(font, x, y, text, screen, color=(0,0,0)):
     """
     imgText = font.render(text, True, color)
     screen.blit(imgText, (x,y))
+
+def merge_dict(d1,d2,merge_fn=lambda x,y:y):
+    result = dict(d1)
+    for k,v in d2.iteritems():
+        if k in result:
+            result[k] = merge_fn(result[k], v)
+        else:
+            result[k] = v
+    return result
+
+a = {"a":1}
+b = {"a":3}
+print merge_dict(a,b,lambda x,y: x+y)
