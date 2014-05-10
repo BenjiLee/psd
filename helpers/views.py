@@ -5,7 +5,7 @@ This file contains the views that are selected by "state" in scanner.py.
 import time
 
 import pygame
-from extras import print_text
+from settings import print_text
 
 
 def selection_view(info):

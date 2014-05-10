@@ -4,7 +4,7 @@ This file contains all the functions that control the touchscreen inputs for the
 import sys
 from collections import defaultdict
 
-import extras.file_controls as f
+import helpers.file_controls as f
 
 def selection_view_touch_input(x,y,info):
     """
