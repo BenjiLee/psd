@@ -58,9 +58,9 @@ def combine_files(info):
         head_reader = csv.reader(open(path+files[0]), delimiter=',')
         sub_reader = csv.reader(open(path+files[1]), delimiter=',')
         for row in head_reader:
-            head_dict[row[0]]=int(row[1])
+            head_dict[row[0]] = int(row[1])
         for row in sub_reader:
-            sub_dict[row[0]]=int(row[1])
+            sub_dict[row[0]] = int(row[1])
 
         combined = merge_dict(head_dict,sub_dict, lambda x, y: x+y)
         os.remove(path+files[0])
