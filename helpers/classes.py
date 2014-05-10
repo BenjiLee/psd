@@ -20,7 +20,6 @@ class Info:
         print self.device
         if self.device == "raspberrypi":
             self.pi = True
-            self.device = "pi"
         else:
             self.pi = False
             
