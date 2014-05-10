@@ -12,7 +12,7 @@ from collections import defaultdict
 import pygame
 from pygame.locals import MOUSEBUTTONDOWN
 
-from helpers.helpers import print_text, merge_dict
+from extras.extras import print_text, merge_dict
 
 
 def write_to_file(info):
